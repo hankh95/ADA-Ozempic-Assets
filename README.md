@@ -1,8 +1,8 @@
 # ADA-Ozempic-Assets
-#CQLS is Clinical QUality Language Shorthand 
-##Overview and FHIR CPG Assets for Ozempic Treatment from ADA GUIDELINES using FSH and CQLS
+## CQLS is Clinical Quality Language Shorthand 
+### Overview of CQLS and FHIR CPG Assets for Ozempic Treatment from ADA GUIDELINES using FSH and CQLS
 
-Overview
+#### Overview
 CQL Shorthand (CQLS), which serves as a bridge in our broader knowledge architecture model. CQLS aligns with the Reusable Assets and Logic (RALL) layer by providing human-readable, editable logic artifacts that can be authored as code, versioned via Git, tested with TDD/BDD in CI/CD pipelines, and published for loading into graph databases. It leverages FHIR Shorthand (FSH) principles for compactness while integrating CQL's ELM semantics, UMLS terminologies (e.g., SNOMED-CT, LOINC, ICD-10), and NLM/HL7 value sets to avoid redundancy. 
 
 Pseudocode is mandated above each Define/Function for clinical editors, enhancing traceability to prose guidelines in the Guideline Semantic Relationship Layer (GSRL). In the Workflow and Time Layer (WATL), CQLS outputs can inline into PlanDefinition.actions for workflow graphs, incorporating GLIFv2's explicit steps and OpenEHR GDL2's clarity in temporal sequencing.
@@ -39,5 +39,6 @@ CQLS remains a declarative shorthand for CQL, emphasizing indentation, keywords,
 7. **RuleSets**: CQLS: `RuleSet: Name` + indented Defines → Expand to prefixed defines or includes.
 8. **Pseudocode**: Always precede Define/Function; simplified to descriptive prose only.
 9. **General Rules**: Indentation → Parentheses in CQL. Flags (e.g., `{where X, during last 1 year}`) → Clauses. Use UMLS codes (e.g., SNOMED) inline. One asset/file for RALL compliance. Test folders: Include /tests with BDD features (e.g., Gherkin for TDD).
-#### Example: Ozempic Eligibility Criteria in CQLS
+
+#### Example: Ozempic Eligibility Criteria in CQLS - in Project
 This CQLS artifact represents eligibility logic for Ozempic (semaglutide) per ADA 2025 guidelines, focusing on T2DM with cardiorenal/weight risks. It uses implicit existence checks, references UMLS/ICD-10 codes, and simplified pseudocode. Compile to CQL for RALL integration (e.g., as a Library referenced in FHIR-CPG PlanDefinition). Test folder example: /tests/ozempic.feature with scenarios like "Given T2DM and ASCVD, eligibility is true".
