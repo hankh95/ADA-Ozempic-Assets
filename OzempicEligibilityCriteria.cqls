@@ -1,0 +1,40 @@
+Library: OzempicEligibilityCriteria v1.0.0
+
+Using: FHIR v4.0.1
+
+Include: FHIRHelpers v4.0.1 as FHIRHelpers
+
+Alias: SNOMED = 'http://snomed.info/sct'
+Alias: ICD10 = 'http://hl7.org/fhir/sid/icd-10'
+Alias: RxNorm = 'http://www.nlm.nih.gov/research/umls/rxnorm'  # For allergy checks
+
+CodeSystem: SNOMEDCT = SNOMED
+CodeSystem: ICD10CS = ICD10
+
+# Use existing NLM/HL7 ValueSet for T2DM to avoid recreation
+ValueSet: Type2DiabetesVS = 'http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.464.1003.103.12.1001'  # NLM VSAC example
+
+Code: ASCVD = 'I25.1' from ICD10CS display 'Atherosclerotic heart disease'
+Code: HeartFailure = 'I50' from ICD10CS display 'Heart failure'
+Code: CKD = 'N18' from ICD10CS display 'Chronic kidney disease'
+Code: Obesity = 'E66.9' from ICD10CS display 'Obesity, unspecified'
+
+Context: Patient
+
+# Descriptive intent: Determine if the patient qualifies for Ozempic based on type 2 diabetes plus risks like heart disease, heart failure, kidney issues, or obesity.
+Define: IsEligibleForOzempic =
+  Condition: Type2DiabetesVS and  # Implicit existence; flags: {where status='active', during last 5 years}
+  (Condition: ASCVD or
+   Condition: HeartFailure or
+   Condition: CKD or
+   (Patient.gender = 'male' and BMI > 30) or
+   (Patient.gender = 'female' and BMI > 30)) and
+  Not AllergyIntolerance: '1991302' from RxNorm  # Semaglutide code; flags: {include patient, where severity='severe'}
+
+# Descriptive intent: Pull the latest body mass index from patient records.
+Define: BMI =
+  Last Observation: "Body Mass Index" O  # LOINC code implicit; flags: {where status='final'}
+    Where O.status = 'final'
+    Sort by effective desc
+    Return O.value as Quantity
+    
